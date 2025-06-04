@@ -1,17 +1,40 @@
 import cdsapi
+import numpy as np
 
 # ------------------------- USAGE ---------------------------
 # from downloader import *
 # years = [year for year in range(startingYear, endYear + 1)]
 #
 # downloadSets(years)
+# ------------------------- USAGE ---------------------------
 
 
+def randomDays():
+    # this function just picks 3 random days in a month
+    
+    n1, n2, n3 = np.random.randint(1, 29), np.random.randint(1, 29), np.random.randint(1, 29) 
+    
+    while(n1 == n2 or n1 == n3 or n2 == n3):
+        if(n1 == n2): 
+            while(n1 == n2):
+                n1 = np.random.randint(1,29)
+        elif(n1 == n3): 
+            while(n1 == n3):
+                n3 = np.random.randint(1,29)
+        elif(n2 == n3):
+            while(n2 == n3):
+                n2 = np.random.randint(1,29)
+    return [n1,n2,n3]
 
-def downloadSets(years): # takes as input a list of years. in our case, [i for i in range(1990, 2026)]
-    print(f"Request {idx + 1}: Year {year}") # just to keep track of which requests are being made
-    print("-----------------------------------------------------")
+def downloadSets(years, random = False): 
+    # takes as input a list of years. in our case, [i for i in range(1990, 2026)]. 
+    # also takes "random" as input, which dictates if the days used for the downloads are random or not. by default, the days are the ones after the else statement in the for loop 
     for idx, year in enumerate(years): # looping over years list
+        if(random == True):
+            days = randomDays()
+        else: days = ["7", "11", "21"] # default days i was using
+        print(f"Request {idx + 1}: Year {year}") # just to keep track of which requests are being made
+        print("-----------------------------------------------------")
         dataset = "derived-era5-single-levels-daily-statistics" # dataset used
         request = {
             "product_type": "reanalysis", 
@@ -35,7 +58,7 @@ def downloadSets(years): # takes as input a list of years. in our case, [i for i
                 "07", "08", "09",
                 "10", "11", "12"
             ],
-            "day": ["07", "11", "21"], # since cds imposes a data limit, only three days can be selected using the 6h resolution/frequency
+            "day": days, # since cds imposes a data limit, only three days can be selected using the 6h resolution/frequency
             "daily_statistic": "daily_mean", # using the daily mean of each statistic
             "time_zone": "utc+00:00",
             "frequency": "6_hourly"
@@ -52,4 +75,4 @@ def downloadSets(years): # takes as input a list of years. in our case, [i for i
     # be that as it may, the requests also, usually, take a while to be approved. so the download of 
     # over 30 years should take a while.
     
-    return 0 
+    return 0
